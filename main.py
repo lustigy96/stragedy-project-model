@@ -91,6 +91,11 @@ if __name__ == '__main__':
         df=all_df,
         field_to_filter=const.control_vars,
         first_time=True)
+    get_data.get_filtered_rows_nan_inf_0(
+        file_path=const.compustat_rdi_mki,
+        df=filter_ctrl_vars_df,
+        field_to_filter=["RD_intensity","marketing_intensity"],
+        first_time=True)
     filter_relevants_mki_rdi(filter_ctrl_vars_df)
     # df_rdi_filter_rows = get_data.get_filtered_rows_nan_inf_0(file_path=const.compustat_rdi)
     # df_mki_filter_rows = get_data.get_filtered_rows_nan_inf_0(file_path=const.compustat_mki)

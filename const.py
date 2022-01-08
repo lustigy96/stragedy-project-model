@@ -24,6 +24,7 @@ compustat_normalized_file = d_loc + d_proccessed_path_postfix + compustat_file_n
 compustat_normalized_calssified_file =compustat_normalized_file.replace('.csv',"")+"-classified.csv"
 compustat_mki = d_loc + d_proccessed_path_postfix + "marketing_intensity_relevants.csv"
 compustat_rdi = d_loc + d_proccessed_path_postfix + "rd_intensity_relevants.csv"
+compustat_rdi_mki = d_loc + d_proccessed_path_postfix + "rd_mki_intensity_relevants.csv"
 
 Lregs_all_simple_file = d_loc+d_proccessed_path_postfix+"Lreg_all_simple.csv"
 Lreg_all_simple_by_sector_file = d_loc+d_proccessed_path_postfix+"Lreg_all_simple_by_sector.csv"

@@ -37,11 +37,12 @@ def filter_df_with_zeros_fields(df_array, list_of_fields):
 
 def filter_row_with_inf_0_nan(df_src, list_of_fields=[], filter_inf= True, fileter_zero=True):
     df = df_src.copy()
-    values_to_filter_by=[]
+    values_to_filter_by=[math.nan, np.nan, np.inf, - np.inf, "inf", "-inf", math.inf, -math.inf]
     if (filter_inf): values_to_filter_by.extend([np.inf, - np.inf, "inf", "-inf", math.inf, -math.inf])
     if (fileter_zero): values_to_filter_by.append(0)
     if(len(list_of_fields)==0): list_of_fields= df.columns
-    df[list_of_fields].replace(values_to_filter_by, np.nan, inplace = True)
+    df[list_of_fields].replace(values_to_filter_by, 0, inplace = True)
+    df = df[(df[list_of_fields] != 0).all(axis=1)]
     df = df.dropna()
     return df
 
