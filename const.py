@@ -8,9 +8,17 @@ d_proccessed_path_postfix = "processed\\"
 
 #files_locations
 sp500_info_file=d_loc+"S&P500-Info.csv";
-compustat_file_name= "snp-500-compustat-2.csv"
-compustat_original_data=    d_loc+d_compustat_path_postfix  +compustat_file_name
-compustat_normalized_file = d_loc+d_proccessed_path_postfix +compustat_file_name.replace('.csv',"")+"-normalized.csv"
+compustat_file_name= "snp-control-vars.csv" # "snp-500-compustat-2.csv"
+compustat_industry_file_name = "industry-compustat-1.csv"
+compustat_ctrl_tot_fname= "compustat-control-tot.csv"
+
+compustat_original_data=    d_loc + d_compustat_path_postfix  + compustat_file_name
+compustat_industry_data=    d_loc + d_compustat_path_postfix  + compustat_industry_file_name
+compustat_industry_normalized_file = d_loc + d_proccessed_path_postfix + compustat_industry_file_name.replace('.csv',"")+"-normalized.csv"
+compustat_ctrl_tot_data=    d_loc + d_proccessed_path_postfix + compustat_ctrl_tot_fname
+
+
+compustat_normalized_file = d_loc + d_proccessed_path_postfix + compustat_file_name.replace('.csv',"")+"-normalized.csv"
 compustat_normalized_calssified_file =compustat_normalized_file.replace('.csv',"")+"-classified.csv"
 compustat_mki = d_loc+d_proccessed_path_postfix+"marketing_intensity_relevants.csv"
 compustat_rdi = d_loc+d_proccessed_path_postfix+"rd_intensity_relevants.csv"

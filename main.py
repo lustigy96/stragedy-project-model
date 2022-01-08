@@ -15,18 +15,8 @@ def plots_try(ticker_df_array):
     figure, axis = plots.subplot(plots.multiple_g_on_same_axis, args, 2, 2)
     plt.show()
 
-def create_compustat_data():
-    df_compustat_normalized = get_data.normalized_compustat(const.compustat_original_data,
-                                                            const.compustat_normalized_file, False)
-    df_classification = pd.read_csv(const.sp500_info_file, index_col=0)
-    df_compustat_normalized_classified = get_data.match_values_by_id(
-        df_compustat_normalized,
-        df_classification,
-        const.compustat_normalized_calssified_file,
-        value_col="GICS Sector",
-        common_id_col="ticker_name",
-        first_time=False)
-    df_arr_by_company = manage_df.separate_to_df_arr_by_uniqe_field(df_compustat_normalized_classified, "ticker_name")
+def filter_relevants_mki_rdi(df_normalized):
+    df_arr_by_company = manage_df.separate_to_df_arr_by_uniqe_field(df_normalized, "ticker_name")
     df_relevant_mki = manage_df.concat_df(
         manage_df.filter_df_with_zeros_fields(df_arr_by_company, ["marketing_intensity"]))
     df_relevant_rdi = manage_df.concat_df(manage_df.filter_df_with_zeros_fields(df_arr_by_company, ["RD_intensity"]))
@@ -34,13 +24,44 @@ def create_compustat_data():
         file_path=const.compustat_mki,
         df=df_relevant_mki,
         field_to_filter=["marketing_intensity"],
-        first_time=False)
+        first_time=True)
     df_rdi_filter_rows = get_data.get_filtered_rows_nan_inf_0(
         file_path=const.compustat_rdi,
         df=df_relevant_rdi,
         field_to_filter=["RD_intensity"],
-        first_time=False)
+        first_time=True)
     return df_mki_filter_rows, df_rdi_filter_rows
+
+def create_compustat_data():
+    df_industry = get_data.get_industry_data(const.compustat_industry_data,
+                                             const.compustat_industry_normalized_file,
+                                             True)
+    df_compustat_normalized = get_data.normalized_compustat(
+                                                            const.compustat_original_data,
+                                                            const.compustat_normalized_file,
+                                                            df_industry,
+                                                            True)
+    # df = manage_df.add_col_from_df_by_uniqe_fileds(df_compustat_normalized,
+    #                                           df_industry,
+    #                                           'gsector',
+    #                                           'fyear',
+    #                                           ['ind_avg_assets','ind_tot_sales','ind_concentration'],
+    #                                             const.compustat_ctrl_tot_data,
+    #                                             True)
+    ''' clasification by snp-info
+        df_classification = pd.read_csv(const.sp500_info_file, index_col=0)
+        df_compustat_normalized_classified = get_data.match_values_by_id(
+        df_compustat_normalized,
+        df_classification,
+        const.compustat_normalized_calssified_file,
+        value_col="GICS Sector",
+        common_id_col="ticker_name",
+        first_time=False)
+    '''
+    return df_compustat_normalized
+
+
+
 
 def simple_linear_reg(df_rdi_filter_rows,df_mki_filter_rows):
     df_rdi_lin=linear_regrations.resression_1var_to_df(const.linear_regression_y,'RD_intensity',df_rdi_filter_rows)
@@ -63,8 +84,9 @@ def simple_linear_reg_by_category(yvar_df_array, vary_name_arr):
     manage_df.concat_df(all_df).to_csv(const.Lreg_all_simple_by_sector_file, index=False)
 
 if __name__ == '__main__':
-    df_rdi_filter_rows = get_data.get_filtered_rows_nan_inf_0(file_path=const.compustat_rdi)
-    df_mki_filter_rows = get_data.get_filtered_rows_nan_inf_0(file_path=const.compustat_mki)
-    simple_linear_reg(df_rdi_filter_rows, df_mki_filter_rows)
+    create_compustat_data()
+    # df_rdi_filter_rows = get_data.get_filtered_rows_nan_inf_0(file_path=const.compustat_rdi)
+    # df_mki_filter_rows = get_data.get_filtered_rows_nan_inf_0(file_path=const.compustat_mki)
+    # simple_linear_reg(df_rdi_filter_rows, df_mki_filter_rows)
     #simple_linear_reg_by_category([df_rdi_filter_rows,df_mki_filter_rows],['RD_intensity','marketing_intensity'])
 
