@@ -35,12 +35,12 @@ def filter_relevants_mki_rdi(df_normalized):
 def create_compustat_data():
     df_industry = get_data.get_industry_data(const.compustat_industry_data,
                                              const.compustat_industry_normalized_file,
-                                             True)
+                                             False)
     df_compustat_normalized = get_data.normalized_compustat(
                                                             const.compustat_original_data,
-                                                            const.compustat_normalized_file,
+                                                            const.compustat_ctrl_tot_data,
                                                             df_industry,
-                                                            True)
+                                                            False)
     # df = manage_df.add_col_from_df_by_uniqe_fileds(df_compustat_normalized,
     #                                           df_industry,
     #                                           'gsector',
@@ -84,7 +84,14 @@ def simple_linear_reg_by_category(yvar_df_array, vary_name_arr):
     manage_df.concat_df(all_df).to_csv(const.Lreg_all_simple_by_sector_file, index=False)
 
 if __name__ == '__main__':
-    create_compustat_data()
+
+    all_df = create_compustat_data()
+    filter_ctrl_vars_df = get_data.get_filtered_rows_nan_inf_0(
+        file_path=const.compustat_filter_ctrl_data,
+        df=all_df,
+        field_to_filter=const.control_vars,
+        first_time=True)
+    filter_relevants_mki_rdi(filter_ctrl_vars_df)
     # df_rdi_filter_rows = get_data.get_filtered_rows_nan_inf_0(file_path=const.compustat_rdi)
     # df_mki_filter_rows = get_data.get_filtered_rows_nan_inf_0(file_path=const.compustat_mki)
     # simple_linear_reg(df_rdi_filter_rows, df_mki_filter_rows)
