@@ -40,3 +40,6 @@ def get_only_relevant_tickers_df_arr(df_array, filer_zero_columns, file_path, fi
         return filter_irrlevant
     return pd.read_csv(file_path, index_col=0)
 
+def get_df(path):
+    df = pd.read_csv(path)
+    return df

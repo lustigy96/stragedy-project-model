@@ -1,12 +1,12 @@
 # This is a sample Python script.
 import pandas as pd
 import const
+import stats_plots
 import plots
 import manage_df
 import get_data
 import linear_regrations
 import matplotlib.pyplot as plt
-
 def plots_try(ticker_df_array):
     args= [[ticker_df_array, "RD_intensity", "market_value_change_precent"],
            [ticker_df_array, "RD_intensity", "roe"],
@@ -15,7 +15,7 @@ def plots_try(ticker_df_array):
     figure, axis = plots.subplot(plots.multiple_g_on_same_axis, args, 2, 2)
     plt.show()
 
-def filter_relevants_mki_rdi(df_normalized):
+def filter_relevants_mki_rdi(df_normalized, first_time):
     df_arr_by_company = manage_df.separate_to_df_arr_by_uniqe_field(df_normalized, "ticker_name")
     df_relevant_mki = manage_df.concat_df(
         manage_df.filter_df_with_zeros_fields(df_arr_by_company, ["marketing_intensity"]))
@@ -24,23 +24,23 @@ def filter_relevants_mki_rdi(df_normalized):
         file_path=const.compustat_mki,
         df=df_relevant_mki,
         field_to_filter=["marketing_intensity"],
-        first_time=True)
+        first_time=first_time)
     df_rdi_filter_rows = get_data.get_filtered_rows_nan_inf_0(
         file_path=const.compustat_rdi,
         df=df_relevant_rdi,
         field_to_filter=["RD_intensity"],
-        first_time=True)
+        first_time=first_time)
     return df_mki_filter_rows, df_rdi_filter_rows
 
 def create_compustat_data():
     df_industry = get_data.get_industry_data(const.compustat_industry_data,
                                              const.compustat_industry_normalized_file,
-                                             False)
+                                             True)
     df_compustat_normalized = get_data.normalized_compustat(
                                                             const.compustat_original_data,
                                                             const.compustat_ctrl_tot_data,
                                                             df_industry,
-                                                            False)
+                                                            True)
     # df = manage_df.add_col_from_df_by_uniqe_fileds(df_compustat_normalized,
     #                                           df_industry,
     #                                           'gsector',
@@ -59,8 +59,6 @@ def create_compustat_data():
         first_time=False)
     '''
     return df_compustat_normalized
-
-
 
 
 def simple_linear_reg(df_rdi_filter_rows,df_mki_filter_rows):
@@ -84,19 +82,34 @@ def simple_linear_reg_by_category(yvar_df_array, vary_name_arr):
     manage_df.concat_df(all_df).to_csv(const.Lreg_all_simple_by_sector_file, index=False)
 
 if __name__ == '__main__':
-
     all_df = create_compustat_data()
     filter_ctrl_vars_df = get_data.get_filtered_rows_nan_inf_0(
         file_path=const.compustat_filter_ctrl_data,
         df=all_df,
         field_to_filter=const.control_vars,
         first_time=True)
-    get_data.get_filtered_rows_nan_inf_0(
+    data= get_data.get_filtered_rows_nan_inf_0(
         file_path=const.compustat_rdi_mki,
         df=filter_ctrl_vars_df,
         field_to_filter=["RD_intensity","marketing_intensity"],
         first_time=True)
-    filter_relevants_mki_rdi(filter_ctrl_vars_df)
+
+    filter_relevants_mki_rdi(filter_ctrl_vars_df, True)
+
+    stats_plots.drow_correlation_matrix(data, ["firm_size",
+                    "tobins_q",
+                    "log-tobins_q",
+                    "capx_scaled",
+                    "sale",
+                    "market_to_book_ratio",
+                    "ind_avg_assets",
+                    "ind_concentration",
+                    "market_share_val",
+                    "year"]
+                   )
+
+
+
     # df_rdi_filter_rows = get_data.get_filtered_rows_nan_inf_0(file_path=const.compustat_rdi)
     # df_mki_filter_rows = get_data.get_filtered_rows_nan_inf_0(file_path=const.compustat_mki)
     # simple_linear_reg(df_rdi_filter_rows, df_mki_filter_rows)
