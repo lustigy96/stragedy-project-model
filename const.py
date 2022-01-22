@@ -25,6 +25,8 @@ compustat_normalized_calssified_file =compustat_normalized_file.replace('.csv',"
 compustat_mki = d_loc + d_proccessed_path_postfix + "marketing_intensity_relevants.csv"
 compustat_rdi = d_loc + d_proccessed_path_postfix + "rd_intensity_relevants.csv"
 compustat_rdi_mki = d_loc + d_proccessed_path_postfix + "rd_mki_intensity_relevants.csv"
+compustat_rdi_mki_age = d_loc + d_proccessed_path_postfix + "rd_mki_intensity_relevants_age.csv"
+
 
 Lregs_all_simple_file = d_loc+d_proccessed_path_postfix+"Lreg_all_simple.csv"
 Lreg_all_simple_by_sector_file = d_loc+d_proccessed_path_postfix+"Lreg_all_simple_by_sector.csv"
@@ -44,8 +46,10 @@ linear_regression_y=["book_value","roe","market_to_book_ratio","firm_size","earn
 p_distinction_val=0.05
 
 control_vars=["firm_size",
-              "tubins_q",
-              "capx",
+              "gvkey",
+              "tobins_q",
+              "log-tobins_q",
+              "capx_scaled",
               "sale",
               "market_to_book_ratio",
               "ind_avg_assets",
